@@ -22,6 +22,8 @@ score = 0
 word = ""
 myrow = ""
 
+#initiate list of guesses
+guesslist = []
 
 
 #class of each letter
@@ -62,6 +64,8 @@ def instructions(message):
 def length():
 
     word_length = int(input("\n Please set the length of the words you will be guessing: "))
+
+#---> check if word_length is number
     
     while (word_length != int(5) and word_length != int(6) and word_length!= int(7)):
         print("\n \t The game only allows 5-,6-, or 7-word guesses")
@@ -70,12 +74,11 @@ def length():
     return word_length
 
         #secret word
-def secret():
-    secret = input("\n Player 1, please set a "+ str(word_length)+"-letter secret word: ")
-    while (len(secret) != word_length):
-        secret = input( " Player 1, please set a fitting secret word: ")
+def secret(secretword = None, word_length = 0):
+    while (len(secretword) != word_length):
+        secretword = input( " Player 1, please set a fitting secret word: ")
 
-    return str(secret)
+    return str(secretword)
 
         #compare the word and the secret
 def compare(row = "", word = None, secret = None):
@@ -97,7 +100,7 @@ def compare(row = "", word = None, secret = None):
     return myrow
         
         #display progress
-def box(word = None, secret = None, color = None):
+def box(guesslist = [], box_row = 1, num_rows = 0, num_cols = 0, word = None, secret = None, color = None):
     if (word == None):
 
         for row in range(0, 2*(num_rows)+1):
@@ -120,30 +123,19 @@ def box(word = None, secret = None, color = None):
                         guesslist.append(myrow)
     else:
         myrow = ""
-        print("This is the word: " + word + " This is the secret: " + secret)
-       # compare (row, word, secret)
-        
-
-        #for i in range(len(word)):
-
-           # myletter = letter(word[i], i)
-
-           # myrow = myrow + str(myletter.show())
-
         newrow = compare (myrow, word, secret)
-
         guesslist[box_row] = newrow
         
 
     return guesslist
 
         #player guesses word
-def guessing():
+def guessing(word_length = 0):
     word = input( "Player 2, please enter your guess: ")
-    while len(word) != word_length:
+    while (len(word) != word_length):
         word = input( "Player 2, please enter your guess: ")
 
-    return str(word)
+    return word
 
 #welcome user
 print("WELCOME TO WORDLE")
@@ -156,51 +148,88 @@ my_message = ("\t 1. First select the length of the words you will be guessing" 
       "\n \t 6. The game repeats for another round")
 
 
+def game():
+    #initiate game
+    instructions(my_message)
 
-#initiate game
-instructions(my_message)
-
-#define variables
-word_length = length()
-num_guesses = word_length+1
-num_rows = num_guesses
-num_cols = word_length
-
-
-#request secret word
-secret = secret()
-
-#initiate list of guesses
-guesslist = []
-
-#show and print the plain display 
-guessList = box()
-for i in (guesslist):
-    print(i)
-print ("Length of list: " + str(len(guesslist)))
-
-
-
-#get input from user
-tries_left = num_guesses
-while ((word.upper() != secret.upper()) and box_row <= (2*(num_rows+1))+1 ):
+    #define variables
+    word_length = length()
+    num_guesses = word_length+1
+    num_rows = num_guesses
+    num_cols = word_length
+    box_row = 1
     
-    print("\n \t Tries Left: " + str(tries_left))
+
+    #request secret word
+    my_secret = input("\n Player 1, please set a "+ str(word_length)+"-letter secret word: ")
+    secretword = secret(my_secret, word_length)
+
+    #initiate list of guesses
+    guesslist = []
+    
+    #show and print the plain display 
+    guesslist = box(guesslist, box_row, num_rows, num_cols)
+    #get input from user
+    tries_left = num_guesses
+    for i in (guesslist):
+        print(i)
+
+    #print("\n \t Tries Left: " + str(tries_left))
+
+
     
     #request a guess word from the player
-    word = guessing()
 
-    #adjust guesslist and display
-    guesslist = box(word, secret)
-    
-    box_row += 2 #jump to the next row
-    tries_left -=1 #adjust no. of tries left
-    for i in (guesslist):
-            print(i)
-    #update the score
-    score = str(len(guesslist) - box_row)
+    for i in range (num_guesses):
+        print("\n \t Tries Left: " + str(tries_left))
+        word =  guessing(word_length)
+        if (word.upper() != secretword.upper()):
+            guesslist = box(guesslist, box_row, num_rows, num_cols, word, secretword)
+        
+            box_row += 2 #jump to the next row
+            tries_left -=1 #adjust no. of tries left
+            for i in (guesslist):
+                    print(i)
+            #update the score
+            score = str(len(guesslist) - box_row)
 
-#print the final score:
-print("\n  SCORE: " + "\n \t \t" + score)
+        else:
+            guesslist = box(guesslist, box_row, num_rows, num_cols, word, secretword)
+        
+            box_row += 2 #jump to the next row
+            tries_left -=1 #adjust no. of tries left
+            for i in (guesslist):
+                    print(i)
+            break
+
+       
+            
+        
+    '''   
+    word =  guessing(word_length)
+    while ((word.upper() != secretword.upper()) and box_row <= (2*(num_rows+1))+1 ):
+        print ("This is my box row", str (box_row))
+        #box row needs to be fixed
+        # print box after every guess and adjust row
+        print("\n \t Tries Left: " + str(tries_left))
+        
+        #request a guess word from the player
+        word = str (guessing(word_length))
+
+        #adjust guesslist and display
+        guesslist = box(guesslist, num_rows, num_cols, word, secretword)
+        
+        box_row += 2 #jump to the next row
+        tries_left -=1 #adjust no. of tries left
+        for i in (guesslist):
+                print(i)
+        #update the score
+        score = str(len(guesslist) - box_row)'''
+
+    #print the final score:
+    print("\n  SCORE: " + "\n \t \t" + score)
+
+#call the game
+game()
 
  
