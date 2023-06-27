@@ -5,16 +5,19 @@ Game: NY Times Wordle
 Extra:
     - Have sign in and keep score updated
     - Check if the entry for everything is either a number or a string
-    - Scrape words from an online place
+
+    -- ensure all words are in the english dictionary
+    -- ensure no repeated guesses
+    -- update final score for both s1 and s2
 
 '''
 
 
 #import
+import scrape
 import maskpass
 import base64
 import random
-
 
 
 import colorama
@@ -30,8 +33,8 @@ num_players = 0
 
 word_length = 0
 secret = ""
-secretlist = ["WATER", "POLIO", "WATERY","RAINBOW"]
-
+#secretlist = ["WATER", "POLIO", "WATERY","RAINBOW"]
+secretlist = scrape.passlist()
 
 box_row = 1
 score = 0 
@@ -112,13 +115,13 @@ def instructions(message):
         
         #decide the number of players
 def numplayers():
-    num_players = int(input("\nPlease select the number of players. " +
-                        "\n\t Enter 1 for 1 player, 2 for two players: "))
-    while (num_players != 1 and num_players != 2):
+    num_players = input("\nPlease select the number of players. " +
+                        "\n\t Enter 1 for 1 player, 2 for two players: ")
+    while (num_players != "1" and num_players != "2"):
         num_players = input ("\n\t Enter 1 for 1 player, 2 for two players: ")
     
 
-    return num_players
+    return int(num_players)
 
 def game_beginning():
     #print out the game's instructions
@@ -145,15 +148,15 @@ def usernames(players):
        #length of the guess words
 def length():
 
-    word_length = int(input("\n Please set the length of the words you will be guessing: "))
+    word_length = input("\n Please set the length of the words you will be guessing: ")
 
 #---> check if word_length is number
     
-    while (word_length != int(5) and word_length != int(6) and word_length!= int(7)):
+    while (word_length != "5" and word_length != "6" and word_length!= "7"):
         print("\n \t The game only allows 5-,6-, or 7-word guesses")
-        word_length = int(input("\t Please set the length of the words you will be guessing: "))
+        word_length = input("\t Please set the length of the words you will be guessing: ")
 
-    return word_length
+    return int(word_length)
 
         #secret word
 def secret(secretword = None, word_length = 0):
@@ -272,6 +275,7 @@ def game():
 
         if (num_players == 1):
             current_player = p
+            other_player = current_player
             #select random word from the secret list
             index = random.randint(0, len(secretlist)-1)
             my_secret = secretlist[index]
@@ -324,7 +328,7 @@ def game():
 
             else:
                 guesslist = box(guesslist, box_row, num_rows, num_cols, word, secretword)
-            
+#----> something is off here!!!
                 #box_row += 2 #jump to the next row
                 #tries_left -=1 #adjust no. of tries left
                 for i in (guesslist):
@@ -332,8 +336,7 @@ def game():
                 score = str(len(guesslist) - box_row)
                 break
         turn+=1
-
-           
+      
 
     #print the final score:
     print("\n  SCORE: " + "\n \t " + str(score))
@@ -350,6 +353,6 @@ while (game() == True):
     game_round += 1
     
     
-
+###---> need to fix final score
 print ("\n\t FINAL SCORE: " + final_score)
 
