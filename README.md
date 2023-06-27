@@ -13,3 +13,4 @@ This game allows players to choose to either play with the computer (single-play
       - Yellow: correct letter, wrong position
       - Red: wrong letter, wrong position
 - The score will decrease by 2 until it reaches 0 and the next player plays or the game ends.
+<img width="278" alt="wordle_image" src="https://github.com/neldajohn/WORDLE/assets/58130223/85255616-86cc-418d-9df8-9706f9c4fc2c">
