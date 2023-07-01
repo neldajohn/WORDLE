@@ -2,14 +2,6 @@
 Name: Nelda
 Game: NY Times Wordle
 
-Extra:
-    - Have sign in and keep score updated
-    - Check if the entry for everything is either a number or a string
-
-    -- ensure all words are in the english dictionary
-    -- ensure no repeated guesses
-    -- update final score for both s1 and s2
-
 '''
 
 
@@ -161,7 +153,8 @@ def length():
         #secret word
 def secret(secretword = None, word_length = 0):
     while (len(secretword) != word_length):
-        secretword = input( "Please set a fitting secret word: ")
+        ask_input = "Please set a fitting secret word: "
+        secretword = maskpass.askpass(prompt = ask_input, mask = "*")
 
     return str(secretword)
         
@@ -272,7 +265,7 @@ def game():
 
     for i in range(num_players):
         #request secret word
-
+        box_row = 1
         if (num_players == 1):
             current_player = p
             other_player = current_player
@@ -286,10 +279,12 @@ def game():
             if (turn%2 == 1):
                 current_player = p1
                 other_player = p2
+                p1.score = score
             elif (turn%2 == 0):
                 current_player = p2
                 other_player = p1
-            ask_input = str(current_player.name.capitalize() + ", please set a " + str(word_length) + "-letter secret word for " +
+                p2.score = score
+            ask_input = str("\n" + current_player.name.capitalize() + ", please set a " + str(word_length) + "-letter secret word for " +
                             other_player.name.capitalize() + ": ")
 
 
@@ -312,6 +307,7 @@ def game():
         
         #request a guess word from the player
         for i in range (num_guesses):
+            p.score = score
             #printing the tries left 
             print("\n \t Tries Left: " + str(tries_left))
             #ask the player to guess
@@ -319,11 +315,13 @@ def game():
             if (word.upper() != secretword.upper()):
                 guesslist = box(guesslist, box_row, num_rows, num_cols, word, secretword)
             
-                box_row += 2 #jump to the next row
-                tries_left -=1 #adjust no. of tries left
+                #box_row += 2 #jump to the next row
+                #tries_left -=1 #adjust no. of tries left
                 for i in (guesslist):
                         print(i)
                 #update the score
+                box_row += 2 #jump to the next row
+                tries_left -=1 #adjust no. of tries left
                 score = str(len(guesslist) - box_row)
 
             else:
@@ -333,13 +331,23 @@ def game():
                 #tries_left -=1 #adjust no. of tries left
                 for i in (guesslist):
                         print(i)
-                score = str(len(guesslist) - box_row)
+                #score = str(len(guesslist) - box_row)
                 break
+        if (turn%2 == 1):
+            p1.score = score
+        elif (turn%2 == 0):
+            p2.score = score
+
         turn+=1
       
 
     #print the final score:
     print("\n  SCORE: " + "\n \t " + str(score))
+
+
+    if (num_players == 2):
+        print("\nFinal Scores: ")
+        print("Player 1: " + str(p1.score) + "\nPlayer 2: " + str(p2.score))
 
     return to_continue(num_players)
 
@@ -352,7 +360,4 @@ def game():
 while (game() == True):
     game_round += 1
     
-    
-###---> need to fix final score
-print ("\n\t FINAL SCORE: " + final_score)
 
